@@ -2,3 +2,10 @@ streamlit
 pandas
 folium
 streamlit-folium
+geopandas
+osmnx
+networkx
+shapely
+earthengine-api
+requests
+numpy
