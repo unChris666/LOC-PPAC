@@ -11,7 +11,7 @@ import streamlit as st
 import pandas as pd
 from streamlit_folium import st_folium
 # Import fungsi dari file hitung_spasial.py
-from hitung_spasial import run_spatial_analysis
+from script import run_spatial_analysis
 
 # Konfigurasi Halaman (Lebar penuh untuk meniru layout 2 kolom di Excel)
 st.set_page_config(layout="wide", page_title="PPAC Spatial Dashboard")
