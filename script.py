@@ -58,20 +58,28 @@ def run_spatial_analysis(lat, lon, radius1, radius2,
         print("⚠️ WARNING: GOOGLE_API_KEY tidak ditemukan di secrets. Menggunakan fallback data.")
 
     # B. Setup Earth Engine
+    GCP_PROJECT_ID = 'project-ppac'
+    
     try:
-        GCP_PROJECT_ID = st.secrets["GCP_PROJECT_ID"]
+        # 1. Ambil data JSON Service Account dari st.secrets lu
+        key_dict = dict(st.secrets["gcp_service_account"])
+        
+        # 2. Ubah formatnya jadi kredensial OAuth2 Google
+        from google.oauth2 import service_account
+        credentials = service_account.Credentials.from_service_account_info(key_dict)
+        scoped_credentials = credentials.with_scopes([
+            'https://www.googleapis.com/auth/earthengine',
+            'https://www.googleapis.com/auth/cloud-platform'
+        ])
+        
+        # 3. Masukkan kredensial ini langsung ke Initialize (TANPA ee.Authenticate!)
+        ee.Initialize(credentials=scoped_credentials, project=GCP_PROJECT_ID)
+        print("✅ Earth Engine berhasil diinisialisasi menggunakan Service Account!")
+        
     except KeyError:
-        # Jika tidak di-set di secrets, gunakan default ini
-        GCP_PROJECT_ID = 'project-ppac'
-
-    try:
-        ee.Initialize(project=GCP_PROJECT_ID)
-        print("✅ Earth Engine berhasil diinisialisasi tanpa autentikasi ulang.")
+        st.error("⚠️ Kunci [gcp_service_account] belum ada di pengaturan st.secrets Streamlit!")
     except Exception as e:
-        print("⚠️ Membutuhkan autentikasi Earth Engine. Jika ini dijalankan di server, pastikan credential sudah diset.")
-        ee.Authenticate()
-        ee.Initialize(project=GCP_PROJECT_ID)
-        print("✅ Autentikasi dan Inisialisasi Earth Engine Sukses!")
+        st.error(f"⚠️ Gagal inisialisasi GEE: {e}")
 
     pt_target = Point(lon, lat)
     gdf_center = gpd.GeoDataFrame(geometry=[pt_target], crs='EPSG:4326')
