@@ -10,3 +10,5 @@ shapely
 earthengine-api
 requests
 numpy
+scikit-learn
+scipy
