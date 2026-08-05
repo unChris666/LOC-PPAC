@@ -107,8 +107,13 @@ with col_right:
         st.dataframe(st.session_state['df_area'], use_container_width=True, hide_index=True)
 
         st.write("##### MAP")
-        # Menampilkan peta folium
-        st_folium(st.session_state['m_folium'], width=700, height=400)
+        # Menampilkan peta folium dengan spesifikasi ukuran yang jelas
+        st_folium(
+            st.session_state['m_folium'], 
+            width=700, 
+            height=500,
+            returned_objects=[] # Mengoptimalkan performa render agar tidak melacak event interaksi yang tidak perlu
+        )
 
         # Tombol Download KML
         st.download_button(
